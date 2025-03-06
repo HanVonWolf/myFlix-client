@@ -38,16 +38,24 @@ export const MainView = () => {
       );
     }
 
+    useEffect(() => {
+      if (!token) {
+        return;
+      }
+  
+      fetch("https://hannahs-myflix-03787a843e96.herokuapp.com/movies", {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+        });
+    }, [token]);
+
   if (selectedMovie) {
     return (
         <>
-          <button
-            onClick={() => {
-              setUser(null);
-            }}
-          >
-            Logout
-          </button>
+<button onClick={() => { setUser(null); setToken(null); }}>Logout</button>
       <MovieView movie={selectedMovie} onBackClick={() => setSelectedMovie(null)}
       />
       </>
@@ -56,13 +64,7 @@ export const MainView = () => {
   if (movies.length === 0) {
     return (
       <>
-        <button
-          onClick={() => {
-            setUser(null);
-          }}
-        >
-          Logout
-        </button>
+<button onClick={() => { setUser(null); setToken(null); }}>Logout</button>
         <div>The list is empty!</div>
       </>
     );
@@ -70,13 +72,7 @@ export const MainView = () => {
 
   return (
     <div>
-            <button
-        onClick={() => {
-          setUser(null);
-        }}
-      >
-        Logout
-      </button>
+<button onClick={() => { setUser(null); setToken(null); }}>Logout</button>
       {movies.map((movie) => (
         <MovieCard
           key={movie.id}
