@@ -12,15 +12,24 @@ const [password, setPassword] = useState("");
       secret: password
     };
 
-    fetch("https://hannahs-myflix-03787a843e96.herokuapp.com", {
+    fetch("https://hannahs-myflix-03787a843e96.herokuapp.com/login", {
       method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
       body: JSON.stringify(data)
-    }).then((response) => {
-        if (response.ok) {
-          onLoggedIn(username);
-        } else {
-          alert("Login failed");
-        }
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log("Login response: ", data);
+      if (data.user) {
+        onLoggedIn(data.user, data.token);
+      } else {
+        alert("No such user");
+      }
+    })
+    .catch((e) => {
+      alert("Something went wrong");
       });
     };
 
