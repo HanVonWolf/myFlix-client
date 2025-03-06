@@ -4,10 +4,26 @@ import { MovieView } from "../movie-view/movie-view";
 import { LoginView } from "../login-view/login-view";
 
 export const MainView = () => {
+  const storedUser = JSON.parse(localStorage.getItem("user"));
+  const storedToken = localStorage.getItem("token");
+  const [user, setUser] = useState(storedUser? storedUser : null);
+  const [token, setToken] = useState(storedToken? storedToken : null);
   const [movies, setMovies] = useState([]);
   const [selectedMovie, setSelectedMovie] = useState(null);
-  const [user, setUser] = useState(null);
-  const [token, setToken] = useState(null);
+
+  useEffect(() => {
+    if (!token) return;
+ 
+    fetch("https://hannahs-myflix-03787a843e96.herokuapp.com/movies", {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((response) => response.json())
+      .then((movies) => {
+        setMovies(movies);
+ 
+      });
+  }, [token]);
+ 
 
   useEffect(() => {
     fetch("https://hannahs-myflix-03787a843e96.herokuapp.com")
@@ -37,20 +53,6 @@ export const MainView = () => {
         />
       );
     }
-
-    useEffect(() => {
-      if (!token) {
-        return;
-      }
-  
-      fetch("https://hannahs-myflix-03787a843e96.herokuapp.com/movies", {
-        headers: { Authorization: `Bearer ${token}` }
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          console.log(data);
-        });
-    }, [token]);
 
   if (selectedMovie) {
     return (
