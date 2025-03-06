@@ -57,7 +57,7 @@ export const MainView = () => {
   if (selectedMovie) {
     return (
         <>
-<button onClick={() => { setUser(null); setToken(null); }}>Logout</button>
+<button onClick={() => { setUser(null); setToken(null); localStorage.clear(); }}>Logout</button>
       <MovieView movie={selectedMovie} onBackClick={() => setSelectedMovie(null)}
       />
       </>
@@ -66,7 +66,7 @@ export const MainView = () => {
   if (movies.length === 0) {
     return (
       <>
-<button onClick={() => { setUser(null); setToken(null); }}>Logout</button>
+<button onClick={() => { setUser(null); setToken(null); localStorage.clear(); }}>Logout</button>
         <div>The list is empty!</div>
       </>
     );
@@ -74,7 +74,7 @@ export const MainView = () => {
 
   return (
     <div>
-<button onClick={() => { setUser(null); setToken(null); }}>Logout</button>
+<button onClick={() => { setUser(null); setToken(null); localStorage.clear(); }}>Logout</button>
       {movies.map((movie) => (
         <MovieCard
           key={movie.id}
