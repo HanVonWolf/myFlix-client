@@ -15,7 +15,7 @@ export const MainView = () => {
   const [movies, setMovies] = useState([]);
   const [selectedMovie, setSelectedMovie] = useState(null);
 
-  useEffect(() => {
+  /*useEffect(() => {
     if (!token) return;
  
     fetch("https://hannahs-myflix-03787a843e96.herokuapp.com/movies", {
@@ -26,7 +26,7 @@ export const MainView = () => {
         setMovies(movies);
  
       });
-  }, [token]);
+  }, [token]);*/
  
 
   useEffect(() => {
@@ -47,49 +47,34 @@ export const MainView = () => {
         });
     }, []);
 
-    if (!user) {
-      return (
-        <>
-          <LoginView onLoggedIn={(user, token) => {
-            setUser(user);
-            setToken(token);
-          }} />
-          or
-          <SignupView />
-        </>
-      );
-    }
-
-  if (selectedMovie) {
     return (
-        <>
-<button onClick={() => { setUser(null); setToken(null); localStorage.clear(); }}>Logout</button>
-      <MovieView movie={selectedMovie} onBackClick={() => setSelectedMovie(null)}
-      />
-      </>
-    );
-  }
-  if (movies.length === 0) {
-    return (
-      <>
-<button onClick={() => { setUser(null); setToken(null); localStorage.clear(); }}>Logout</button>
-        <div>The list is empty!</div>
-      </>
-    );
-  }
-
-  return (
-    <div>
-<button onClick={() => { setUser(null); setToken(null); localStorage.clear(); }}>Logout</button>
-      {movies.map((movie) => (
-        <MovieCard
-          key={movie.id}
-          movie={movie}
-          onMovieClick={(newSelectedMovie) => {
-            setSelectedMovie(newSelectedMovie);
-          }}
-        />
-      ))}
-    </div>
-  );
-};
+      <Row>
+        {!user ? (
+          <>
+          <LoginView onLoggedIn={(user) => setUser(user)} />
+            or
+            <SignupView />
+            </>
+        ) : selectedMovie ? (
+          <MovieView
+          movie={selectedMovie}
+          onBackClick={() => setSelectedMovie(null)}
+          />
+        ) : movies.length === 0 ? (
+          <div>The list is empty! </div>
+        ) : (
+          <>
+          {movies.map((movie) => (
+            <MovieCard
+            key={movie.id}
+            movie={movie}
+            onBookClick={(newSelectedMovie) => {
+              setSelectedMovie(newSelectedMovie);
+            }}
+            />
+          ))}
+          </>
+        )}
+        </Row>
+        );
+      };
