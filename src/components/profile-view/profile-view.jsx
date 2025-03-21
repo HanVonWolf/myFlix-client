@@ -1,4 +1,15 @@
-const favMovies = movies.filter((movie) => {
+import { useEffect, useState } from "react";
+import { Button, Form } from "react-bootstrap";
+import { MovieCard } from "../movie-card/movie-card";
+
+export const ProfileView = ({ movies }) => {
+  const localUser = JSON.parse(localStorage.getItem("user"));
+  
+  if (!localUser) {
+    return <p>Please log in to view and edit your profile.</p>;
+  }
+
+  const favMovies = movies.filter((movie) => {
     return localUser.FavoriteMovies.includes(movie._id);
   });
 
@@ -94,6 +105,4 @@ const favMovies = movies.filter((movie) => {
       </div>
     </Form>
   );
-
-
-export default ProfileView;
+};
