@@ -15,6 +15,14 @@ export const MainView = () => {
   const [user, setUser] = useState(storedUser? storedUser : null);
   const [token, setToken] = useState(storedToken? storedToken : null);
   const [movies, setMovies] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // Filter movies based on search query
+  const filteredMovies = movies.filter((movie) =>
+    movie.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+
   /*const [selectedMovie, setSelectedMovie] = useState(null);*/
 
   /*useEffect(() => {
