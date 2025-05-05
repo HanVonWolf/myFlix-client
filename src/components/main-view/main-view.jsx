@@ -54,9 +54,6 @@ export const MainView = () => {
               description: movie.Description, // Use uppercase 'Description'
               genre: movie.Genre, // Use uppercase 'Genre'
               director: movie.Director, // Use uppercase 'Director'
-              imagePath: movie.ImagePath,
-              featured: movie.Featured,
-              // Add other properties if needed
             };
           });
 
