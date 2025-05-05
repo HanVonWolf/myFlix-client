@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 
 
 export const MovieCard = ({ movie }) => {
+  console.log(movie)
     return (
       <Card className="h-100">
         <Card.Body>
@@ -21,6 +22,7 @@ export const MovieCard = ({ movie }) => {
       </Card>
     );
   };
+  
 
 
   // Update PropTypes to match the expected PascalCase structure from the backend
