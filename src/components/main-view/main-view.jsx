@@ -40,29 +40,50 @@ export const MainView = () => {
  
 
   useEffect(() => {
-    fetch("https://hannahs-myflix-03787a843e96.herokuapp.com")
-    .then((response) => response.json())
+    // Only fetch movies if a token exists (user is logged in)
+    if (token) {
+      fetch("https://hannahs-myflix-03787a843e96.herokuapp.com/movies", { // <-- Correct URL
+        headers: { Authorization: `Bearer ${token}` }, // <-- Add Authorization header
+      })
+        .then((response) => {
+          if (!response.ok) {
+            // Handle non-200 responses, e.g., 401 Unauthorized
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          return response.json();
+        })
         .then((data) => {
-          const moviesFromApi = data.docs.map((movie) => {
+          // The /movies endpoint returns an array directly, not data.docs
+          const moviesFromApi = data.map((movie) => {
             return {
               id: movie._id,
-              title: movie.title,
-              description: movie.description,
-              genre: movie.genre,
-              director: doc.director,
+              title: movie.Title, // <-- Use uppercase 'Title'
+              description: movie.Description, // <-- Use uppercase 'Description'
+              genre: movie.Genre, // <-- Use uppercase 'Genre'
+              director: movie.Director, // <-- Use uppercase 'Director'
+              // Add other properties you need, e.g., ImagePath, Featured
+              imagePath: movie.ImagePath,
+              featured: movie.Featured,
             };
           });
-  
-          setMovies(moviesFromApi);
-        });
-    }, []);
 
-      return (
+          setMovies(moviesFromApi);
+        })
+        .catch((error) => {
+          console.error("Error fetching movies:", error);
+          // Optionally handle the error in the UI, e.g., set an error state
+        });
+    }
+  }, [token]);
+
+  return (
     <BrowserRouter>
           <NavigationBar
         user={user}
         onLoggedOut={() => {
           setUser(null);
+          setToken(null); // Also clear the token on logout
+          localStorage.clear(); // Clear local storage
         }}
       />
       <Row className="justify-content-md-center">
@@ -104,7 +125,8 @@ export const MainView = () => {
                 {!user ? (
                   <Navigate to="/login" replace />
                 ) : movies.length === 0 ? (
-                  <Col>The list is empty!</Col>
+                  // You might want a loading state here instead of "empty" immediately
+                  <Col>Loading movies or list is empty!</Col>
                 ) : (
                   <Col md={8}>
                     <MovieView movies={movies} />
@@ -120,10 +142,11 @@ export const MainView = () => {
                 {!user ? (
                   <Navigate to="/login" replace />
                 ) : movies.length === 0 ? (
-                  <Col>The list is empty!</Col>
+                   // You might want a loading state here instead of "empty" immediately
+                  <Col>Loading movies or list is empty!</Col>
                 ) : (
                   <>
-                    {moviess.map((movie) => (
+                    {movies.map((movie) => ( // <-- Corrected 'movies'
                       <Col className="mb-4" key={movie.id} md={3}>
                         <MovieCard movie={movie} />
                       </Col>
