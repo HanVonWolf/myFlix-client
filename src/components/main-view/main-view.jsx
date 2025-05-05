@@ -24,15 +24,12 @@ export const MainView = () => {
   );
 
   useEffect(() => {
-    // Only fetch movies if a token exists (user is logged in)
     if (token) {
       fetch("https://hannahs-myflix-03787a843e96.herokuapp.com/movies", {
         headers: { Authorization: `Bearer ${token}` },
       })
         .then((response) => {
           if (!response.ok) {
-            // Handle non-200 responses, e.g., 401 Unauthorized
-            // If 401, maybe log out the user?
             if (response.status === 401) {
                 console.error("Unauthorized: Token might be invalid or expired.");
                 // Optional: Log out the user automatically
@@ -45,26 +42,35 @@ export const MainView = () => {
           return response.json();
         })
         .then((data) => {
-          // Assuming the API returns an array of movie objects directly
-          // Map the API data to your desired format
+          console.log("Raw movies API data:", data); // <-- Add this log
+  
+          // Check if data is an array before mapping
+          if (!Array.isArray(data)) {
+              console.error("API did not return an array:", data);
+              setMovies([]); // Set to empty array if unexpected format
+              return; // Stop processing
+          }
+  
           const moviesFromApi = data.map((movie) => {
+            // Add logs here to check individual movie objects before mapping
+            // console.log("Processing movie:", movie);
             return {
-              id: movie._id, // Assuming _id is the unique identifier
-              title: movie.Title, // Use uppercase 'Title' as per your mapping
-              description: movie.Description, // Use uppercase 'Description'
-              genre: movie.Genre, // Use uppercase 'Genre'
-              director: movie.Director, // Use uppercase 'Director'
+              id: movie._id,
+              title: movie.Title, // Check if 'Title' exists
+              description: movie.Description, // Check if 'Description' exists
+              genre: movie.Genre, // Check if 'Genre' exists
+              director: movie.Director, // Check if 'Director' exists
             };
           });
-
+  
+          console.log("Mapped movies data:", moviesFromApi); // <-- Add this log
           setMovies(moviesFromApi);
         })
         .catch((error) => {
           console.error("Error fetching movies:", error);
-          // Optionally handle the error in the UI, e.g., set an error state
         });
     }
-  }, [token]); // Dependency array: runs when 'token' changes
+  }, [token]);
 
   return (
     <BrowserRouter>
