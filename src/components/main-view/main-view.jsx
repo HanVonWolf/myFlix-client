@@ -12,58 +12,51 @@ import { NavigationBar } from "../navigation-bar/navigation-bar";
 export const MainView = () => {
   const storedUser = JSON.parse(localStorage.getItem("user"));
   const storedToken = localStorage.getItem("token");
-  const [user, setUser] = useState(storedUser? storedUser : null);
-  const [token, setToken] = useState(storedToken? storedToken : null);
+  const [user, setUser] = useState(storedUser ? storedUser : null);
+  const [token, setToken] = useState(storedToken ? storedToken : null);
   const [movies, setMovies] = useState([]);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState(""); // Assuming you'll add a search input later
 
   // Filter movies based on search query
+  // Make sure movie objects have a 'title' property (based on your mapping)
   const filteredMovies = movies.filter((movie) =>
-    movie.name.toLowerCase().includes(searchQuery.toLowerCase())
+    movie.title.toLowerCase().includes(searchQuery.toLowerCase()) // Use movie.title
   );
-
-
-  /*const [selectedMovie, setSelectedMovie] = useState(null);*/
-
-  /*useEffect(() => {
-    if (!token) return;
- 
-    fetch("https://hannahs-myflix-03787a843e96.herokuapp.com/movies", {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then((response) => response.json())
-      .then((movies) => {
-        setMovies(movies);
- 
-      });
-  }, [token]);*/
- 
 
   useEffect(() => {
     // Only fetch movies if a token exists (user is logged in)
     if (token) {
-      fetch("https://hannahs-myflix-03787a843e96.herokuapp.com/movies", { // <-- Correct URL
-        headers: { Authorization: `Bearer ${token}` }, // <-- Add Authorization header
+      fetch("https://hannahs-myflix-03787a843e96.herokuapp.com/movies", {
+        headers: { Authorization: `Bearer ${token}` },
       })
         .then((response) => {
           if (!response.ok) {
             // Handle non-200 responses, e.g., 401 Unauthorized
+            // If 401, maybe log out the user?
+            if (response.status === 401) {
+                console.error("Unauthorized: Token might be invalid or expired.");
+                // Optional: Log out the user automatically
+                // setUser(null);
+                // setToken(null);
+                // localStorage.clear();
+            }
             throw new Error(`HTTP error! status: ${response.status}`);
           }
           return response.json();
         })
         .then((data) => {
-          // The /movies endpoint returns an array directly, not data.docs
+          // Assuming the API returns an array of movie objects directly
+          // Map the API data to your desired format
           const moviesFromApi = data.map((movie) => {
             return {
-              id: movie._id,
-              title: movie.Title, // <-- Use uppercase 'Title'
-              description: movie.Description, // <-- Use uppercase 'Description'
-              genre: movie.Genre, // <-- Use uppercase 'Genre'
-              director: movie.Director, // <-- Use uppercase 'Director'
-              // Add other properties you need, e.g., ImagePath, Featured
+              id: movie._id, // Assuming _id is the unique identifier
+              title: movie.Title, // Use uppercase 'Title' as per your mapping
+              description: movie.Description, // Use uppercase 'Description'
+              genre: movie.Genre, // Use uppercase 'Genre'
+              director: movie.Director, // Use uppercase 'Director'
               imagePath: movie.ImagePath,
               featured: movie.Featured,
+              // Add other properties if needed
             };
           });
 
@@ -74,17 +67,19 @@ export const MainView = () => {
           // Optionally handle the error in the UI, e.g., set an error state
         });
     }
-  }, [token]);
+  }, [token]); // Dependency array: runs when 'token' changes
 
   return (
     <BrowserRouter>
-          <NavigationBar
+      <NavigationBar
         user={user}
         onLoggedOut={() => {
           setUser(null);
           setToken(null); // Also clear the token on logout
           localStorage.clear(); // Clear local storage
         }}
+        // You might pass setSearchQuery down to NavigationBar if it has a search input
+        // setSearchQuery={setSearchQuery}
       />
       <Row className="justify-content-md-center">
         <Routes>
@@ -100,7 +95,6 @@ export const MainView = () => {
                   </Col>
                 )}
               </>
-
             }
           />
           <Route
@@ -111,11 +105,14 @@ export const MainView = () => {
                   <Navigate to="/" />
                 ) : (
                   <Col md={5}>
-                    <LoginView onLoggedIn={(user) => setUser(user)} />
+                    {/* CORRECTED: Pass both user and token to onLoggedIn */}
+                    <LoginView onLoggedIn={(loggedInUser, authToken) => {
+                        setUser(loggedInUser);
+                        setToken(authToken);
+                    }} />
                   </Col>
                 )}
               </>
-
             }
           />
           <Route
@@ -125,10 +122,11 @@ export const MainView = () => {
                 {!user ? (
                   <Navigate to="/login" replace />
                 ) : movies.length === 0 ? (
-                  // You might want a loading state here instead of "empty" immediately
+                   // Consider adding a separate loading state here
                   <Col>Loading movies or list is empty!</Col>
                 ) : (
                   <Col md={8}>
+                    {/* Pass the full movies list to MovieView */}
                     <MovieView movies={movies} />
                   </Col>
                 )}
@@ -142,11 +140,12 @@ export const MainView = () => {
                 {!user ? (
                   <Navigate to="/login" replace />
                 ) : movies.length === 0 ? (
-                   // You might want a loading state here instead of "empty" immediately
+                   // Consider adding a separate loading state here
                   <Col>Loading movies or list is empty!</Col>
                 ) : (
                   <>
-                    {movies.map((movie) => ( // <-- Corrected 'movies'
+                    {/* CORRECTED: Use filteredMovies for rendering */}
+                    {filteredMovies.map((movie) => (
                       <Col className="mb-4" key={movie.id} md={3}>
                         <MovieCard movie={movie} />
                       </Col>
