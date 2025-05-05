@@ -10,8 +10,8 @@ const [password, setPassword] = useState("");
     event.preventDefault();
 
     const data = {
-      access: username,
-      secret: password
+      username: username,
+      password: password
     };
 
     fetch("https://hannahs-myflix-03787a843e96.herokuapp.com/login", {
