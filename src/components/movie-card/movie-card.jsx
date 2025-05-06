@@ -5,16 +5,19 @@ import { Link } from "react-router-dom";
 
 
 export const MovieCard = ({ movie }) => {
-  console.log(movie)
+    // console.log("MovieCard received movie:", movie); // Keep or remove logs as needed
     return (
       <Card className="h-100">
+        {/* Assuming imagePath exists and you want to show it on the card */}
+        {/* Use lowercase imagePath */}
+        {movie.imagePath && <Card.Img variant="top" src={movie.imagePath} alt={movie.title} />}
         <Card.Body>
-          {/* Assuming 'Title' is PascalCase from backend */}
-          <Card.Title>{movie.Title}</Card.Title>
-          {/* Accessing the 'Name' property of the 'Director' object */}
-          {/* Add checks to prevent errors if Director or Director.Name is missing */}
-          {movie.Director && movie.Director.Name && <Card.Text>Director: {movie.Director.Name}</Card.Text>}
-            {/* Assuming 'id' is available or mapped from '_id' */}
+          {/* Use lowercase title */}
+          <Card.Title>{movie.title}</Card.Title>
+          {/* Access lowercase director.name */}
+          {/* Add checks */}
+          {movie.director && movie.director.name && <Card.Text>Director: {movie.director.name}</Card.Text>}
+            {/* Use id if that's what the mapped data uses */}
             <Link to={`/movies/${encodeURIComponent(movie.id)}`}>
             <Button variant="link">Open</Button>
         </Link>
@@ -22,23 +25,23 @@ export const MovieCard = ({ movie }) => {
       </Card>
     );
   };
-  
 
-
-  // Update PropTypes to match the expected PascalCase structure from the backend
+  // Update PropTypes to match the expected lowercase structure from the mapped data
   MovieCard.propTypes = {
     movie: PropTypes.shape({
-      Title: PropTypes.string.isRequired, // Changed to Title
-      Description: PropTypes.string,
-      Genre: PropTypes.shape({ // Changed to Genre
-        Name: PropTypes.string.isRequired, // Changed to Name
-        Description: PropTypes.string,
+      id: PropTypes.string.isRequired, // Use id
+      title: PropTypes.string.isRequired, // Use title
+      description: PropTypes.string, // Use description
+      imagePath: PropTypes.string, // Use imagePath
+      genre: PropTypes.shape({ // Use genre
+        name: PropTypes.string.isRequired, // Use name
+        description: PropTypes.string, // Use description
       }),
-      Director: PropTypes.shape({ // Changed to Director
-        Name: PropTypes.string.isRequired, // Changed to Name
-        Bio:  PropTypes.string,
-        Birth:  PropTypes.string,
+      director: PropTypes.shape({ // Use director
+        name: PropTypes.string.isRequired, // Use name
+        bio:  PropTypes.string, // Use bio
+        birth:  PropTypes.string, // Use birth
       })
     }).isRequired,
-    // onMovieClick: PropTypes.func.isRequired // This prop is not used in the component, you can remove it
+    // onMovieClick: PropTypes.func.isRequired // Still not used here
   };
