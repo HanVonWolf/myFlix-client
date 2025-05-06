@@ -11,18 +11,16 @@ export const MovieView = ({ movies }) => {
   // Find the movie using id if that's what the mapped data uses
   const movie = movies.find((m) => m.id === movieId);
 
-  // console.log("MovieView received movies:", movies); // Keep or remove logs
-  // console.log("MovieView found movie:", movie); // Keep or remove logs
+  // console.log("MovieView movie:", movie); // Keep or remove logs
+  // console.log("MovieView movie.director:", movie?.director);
+  // console.log("MovieView movie.director?.Name:", movie?.director?.Name); // Check PascalCase Name
+  // console.log("MovieView movie.genre:", movie?.genre);
+  // console.log("MovieView movie.genre?.Name:", movie?.genre?.Name); // Check PascalCase Name
 
-  // Handle case where movie is not found
+
   if (!movie) {
-    // console.log("Movie not found in MovieView"); // Keep or remove logs
     return <div>Movie not found.</div>;
   }
-
-  // console.log("MovieView director:", movie.director); // Keep or remove logs
-  // console.log("MovieView genre:", movie.genre); // Keep or remove logs
-
 
     return (
       <div>
@@ -40,14 +38,37 @@ export const MovieView = ({ movies }) => {
         </div>
         <div>
           <span>Director: </span>
-          {/* Access lowercase director.name */}
-          {movie.director && movie.director.name && <span>{movie.director.name}</span>}
+          {/* Access lowercase director, but PascalCase Name */}
+          {/* Check if director object exists AND if director.Name exists */}
+          {movie.director && movie.director.Name && <span>{movie.director.Name}</span>}
         </div>
         <div>
           <span>Genre: </span>
-          {/* Access lowercase genre.name */}
-          {movie.genre && movie.genre.name && <span>{movie.genre.name}</span>}
+          {/* Access lowercase genre, but PascalCase Name */}
+          {/* Check if genre object exists AND if genre.Name exists */}
+          {movie.genre && movie.genre.Name && <span>{movie.genre.Name}</span>}
         </div>
+        {/* Add Bio and Birth if you want to display them in MovieView */}
+        {movie.director && movie.director.Bio && (
+            <div>
+                <span>Bio: </span>
+                <span>{movie.director.Bio}</span>
+            </div>
+        )}
+         {movie.director && movie.director.Birth && (
+            <div>
+                <span>Birth: </span>
+                <span>{movie.director.Birth}</span>
+            </div>
+        )}
+        {/* Add Genre Description if you want to display it */}
+         {movie.genre && movie.genre.Description && (
+            <div>
+                <span>Genre Description: </span>
+                <span>{movie.genre.Description}</span>
+            </div>
+        )}
+
        <Link to={`/`}>
         <button className="back-button">Back</button>
       </Link>
@@ -60,18 +81,18 @@ export const MovieView = ({ movies }) => {
   MovieView.propTypes = {
     movies: PropTypes.arrayOf(
       PropTypes.shape({
-        id: PropTypes.string.isRequired, // Use id
-        title: PropTypes.string.isRequired, // Use title
-        description: PropTypes.string, // Use description
-        imagePath: PropTypes.string, // Use imagePath
-        genre: PropTypes.shape({ // Use genre
-          name: PropTypes.string.isRequired, // Use name
-          description: PropTypes.string, // Use description
+        id: PropTypes.string.isRequired, // Use id (lowercase)
+        title: PropTypes.string.isRequired, // Use title (lowercase)
+        description: PropTypes.string, // Use description (lowercase)
+        imagePath: PropTypes.string, // Use imagePath (lowercase)
+        genre: PropTypes.shape({ // Use genre (lowercase)
+          Name: PropTypes.string.isRequired, // Use Name (PascalCase)
+          Description: PropTypes.string, // Use Description (PascalCase)
         }),
-        director: PropTypes.shape({ // Use director
-          name: PropTypes.string.isRequired, // Use name
-          bio:  PropTypes.string, // Use bio
-          birth:  PropTypes.string, // Use birth
+        director: PropTypes.shape({ // Use director (lowercase)
+          Name: PropTypes.string.isRequired, // Use Name (PascalCase)
+          Bio:  PropTypes.string, // Use Bio (PascalCase)
+          Birth:  PropTypes.string, // Use Birth (PascalCase)
         })
       })
     ).isRequired,
