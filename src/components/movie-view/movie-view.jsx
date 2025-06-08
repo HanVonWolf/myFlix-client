@@ -15,7 +15,7 @@ export const MovieView = ({ movies }) => {
   }, [])
 
   const addToFavorite = () => {
-      fetch(`https://marvelflix1nekev.herokuapp.com/users/${user.Username}/movies/${movieId}`, {
+      fetch(`https://hannahs-myflix-03787a843e96.herokuapp.com/users/${user.Username}/movies/${movieId}`, {
           method: "POST",
           headers: {
               "Content-Type": "application/json",
@@ -33,7 +33,7 @@ export const MovieView = ({ movies }) => {
   };
 
   const removeFavorite = () => {
-      fetch(`https://marvelflix1nekev.herokuapp.com/users/${user.Username}/movies/${movieId}`, {
+      fetch(`https://hannahs-myflix-03787a843e96.herokuapp.com/users/${user.Username}/movies/${movieId}`, {
           method: "DELETE",
           headers: {
               "Content-Type": "application/json",
