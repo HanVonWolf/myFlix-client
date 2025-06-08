@@ -8,6 +8,7 @@ import { MovieView } from "../movie-view/movie-view";
 import { LoginView } from "../login-view/login-view";
 import { SignupView } from "../signup-view/signup-view";
 import { NavigationBar } from "../navigation-bar/navigation-bar";
+import { ProfileView } from '../profile-view/profile-view'; 
 
 export const MainView = () => {
   const storedUser = JSON.parse(localStorage.getItem("user"));
@@ -136,6 +137,25 @@ export const MainView = () => {
               </>
             }
           />
+                  <Route
+          path="/profile" // Or whatever path you want for the profile
+          element={
+            <>
+              {!user ? (
+                <Navigate to="/login" replace />
+              ) : (
+                <Col md={8}> {/* Or whatever layout you prefer */}
+                  <ProfileView
+                    user={user}
+                    token={token}
+                    movies={movies} /* Pass movies if profile needs favorite movies */
+                    onUserUpdate={(updatedUser) => setUser(updatedUser)} /* If profile can update user info */
+                  />
+                </Col>
+              )}
+            </>
+          }
+        />
           <Route
             path="/"
             element={
