@@ -7,6 +7,48 @@ import './movie-view.scss';
 
 export const MovieView = ({ movies }) => {
   const { movieId } = useParams();
+  const [ Favorite, setFavorite] = useState(false);
+
+  useEffect(()=> {
+      const isFavorited = user.FavoriteMovies.includes(movieId)
+      setFavorite(isFavorited);
+  }, [])
+
+  const addToFavorite = () => {
+      fetch(`https://marvelflix1nekev.herokuapp.com/users/${user.Username}/movies/${movieId}`, {
+          method: "POST",
+          headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`
+          }
+      }).then((response) => {
+          if (response.ok) {
+              return response.json()
+          }
+      }).then((data) => {
+          setFavorite(true);
+          localStorage.setItem("user", JSON.stringify(data));
+          setUser(data);
+      })
+  };
+
+  const removeFavorite = () => {
+      fetch(`https://marvelflix1nekev.herokuapp.com/users/${user.Username}/movies/${movieId}`, {
+          method: "DELETE",
+          headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`
+          }
+      }).then((response) => {
+          if (response.ok) {
+              return response.json()
+          }
+      }).then((data) => {
+          setFavorite(false);
+          localStorage.setItem("user", JSON.stringify(data));
+          setUser(data);
+      })
+  }
 
   // Find the movie using id if that's what the mapped data uses
   const movie = movies.find((m) => m.id === movieId);
