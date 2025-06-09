@@ -131,7 +131,13 @@ export const MainView = () => {
                 ) : (
                   <Col md={8}>
                     {/* Pass the full movies list to MovieView */}
-                    <MovieView movies={movies} />
+                    <MovieView
+  movies={movies}
+  user={user}      // Pass the user state
+  token={token}    // Pass the token state
+  setUser={setUser}  // Pass the setUser function
+/>
+
                   </Col>
                 )}
               </>
