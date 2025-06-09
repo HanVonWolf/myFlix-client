@@ -9,23 +9,32 @@ export const ProfileView = ({ movies }) => {
     return <p>Please log in to view and edit your profile.</p>;
   }
 
-  const favMovies = movies.filter((movie) => {
-    return localUser.FavoriteMovies.includes(movie._id);
+  // Use the misspelled field name from localStorage
+  const favoriteMovieIds = localUser.FavouriteMovie || []; // Changed from FavoriteMovies
+
+  const safeMovies = Array.isArray(movies) ? movies : [];
+
+  const favMovies = safeMovies.filter((movie) => {
+    return movie && movie._id && favoriteMovieIds.includes(movie._id);
   });
 
+  // Use the misspelled field name for initial state
   const [username, setUsername] = useState(localUser.Username || "");
   const [password, setPassword] = useState("");
-  const [email, setEmail] = useState(localUser.Email || "");
+  const [email, setEmail] = useState(localUser.eamil || ""); // Changed from localUser.Email
   const [birthday, setBirthday] = useState(localUser.Birthday || "01/01/0001");
 
   const handleSubmit = (event) => {
     event.preventDefault();
 
+    // Send data with the misspelled field names that the backend expects
     const data = {
       Username: username,
-      ...(password && { Password: password }),  // Only include the password if it's changed
-      Email: email,
+      ...(password && { Password: password }),
+      eamil: email, // Changed from Email
       Birthday: birthday
+      // If your backend expects FavouriteMovie for updates, you'd handle that here too,
+      // though typically favorite movies are updated via separate endpoints.
     };
 
     fetch(`https://hannahs-myflix-03787a843e96.herokuapp.com/users/${localUser.Username}`, {
@@ -39,9 +48,9 @@ export const ProfileView = ({ movies }) => {
       if (response.ok) {
         alert("Profile updated successfully");
         response.json().then((updatedUser) => {
-          // Update localStorage with the new user details
+          // Assume the backend returns the user object with the same (misspelled) field names
           localStorage.setItem("user", JSON.stringify(updatedUser));
-          window.location.reload();  // Optionally reload the page
+          window.location.reload();
         });
       } else {
         alert("Profile update failed");
@@ -71,11 +80,12 @@ export const ProfileView = ({ movies }) => {
         />
       </Form.Group>
 
-      <Form.Group controlId="formEmail">
+      {/* The form label can still be "Email" for user-friendliness */}
+      <Form.Group controlId="formEmail"> 
         <Form.Label>Email:</Form.Label>
         <Form.Control
           type="email"
-          value={email}
+          value={email} // This state variable now holds data from localUser.eamil
           onChange={(e) => setEmail(e.target.value)}
           required
         />
@@ -85,7 +95,7 @@ export const ProfileView = ({ movies }) => {
         <Form.Label>Birthday:</Form.Label>
         <Form.Control
           type="date"
-          value={birthday}
+          value={birthday ? new Date(birthday).toISOString().split('T')[0] : ""}
           onChange={(e) => setBirthday(e.target.value)}
           required
         />
