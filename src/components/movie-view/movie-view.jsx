@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Col from 'react-bootstrap/Col';
 import { useParams } from "react-router";
 import { Link } from "react-router-dom";
