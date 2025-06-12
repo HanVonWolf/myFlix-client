@@ -3,54 +3,44 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router";
 import { Link } from "react-router-dom";
 import Button from 'react-bootstrap/Button'; // For the favorite button
-// Col was imported but not used. If you need it for layout, uncomment.
 // import Col from 'react-bootstrap/Col';
 
 import './movie-view.scss';
 
-// It's good practice to define API URLs in one place,
-// e.g., a config file or environment variables, but for now, this is fine.
 const API_BASE_URL = "https://hannahs-myflix-03787a843e96.herokuapp.com";
 
 export const MovieView = ({ movies, user, token, setUser }) => {
   const { movieId } = useParams();
-  // Renamed state variable for clarity (convention: booleans often start with 'is' or 'has')
   const [isFavorite, setIsFavorite] = useState(false);
-  const [isLoading, setIsLoading] = useState(false); // To manage loading state for API calls
+  const [isLoading, setIsLoading] = useState(false); 
 
   useEffect(() => {
-    // Ensure user object and movieId are available before checking favorites
     if (user && user.Username && movieId) {
-      // IMPORTANT: Check the actual structure of your 'user' object.
-      // If your MongoDB field is 'FavouriteMovie' (with a 'u'),
-      // your API should ideally return it with that name in the user object.
-      // console.log("User object for favorite check:", user); // Uncomment to inspect user object
 
-      const favoriteMoviesList = user.FavouriteMovie || user.FavoriteMovies || []; // Try 'FavouriteMovie' first
+
+      const favoriteMoviesList = user.FavouriteMovie || user.FavoriteMovies || []; 
 
       if (Array.isArray(favoriteMoviesList)) {
         const favorited = favoriteMoviesList.includes(movieId);
         setIsFavorite(favorited);
       } else {
         console.warn("User's favorite movies list is not an array or is missing:", favoriteMoviesList);
-        setIsFavorite(false); // Default to not favorite if the list is problematic
+        setIsFavorite(false); 
       }
     } else {
-      // If no user or movieId, it can't be a favorite
       setIsFavorite(false);
     }
-  }, [user, movieId]); // Dependencies: re-run if user or movieId changes
+  }, [user, movieId]); 
 
   const handleToggleFavorite = () => {
     if (!user || !token) {
       alert("Please log in to manage your favorites.");
-      // Optionally, you could redirect to a login page here
       return;
     }
 
     setIsLoading(true);
     const url = `${API_BASE_URL}/users/${user.Username}/movies/${movieId}`;
-    const method = isFavorite ? "DELETE" : "POST"; // Determine action based on current state
+    const method = isFavorite ? "DELETE" : "POST"; 
 
     fetch(url, {
       method: method,
@@ -61,25 +51,24 @@ export const MovieView = ({ movies, user, token, setUser }) => {
     })
       .then((response) => {
         if (!response.ok) {
-          // Try to parse error from API if possible
+
           return response.json().then(errData => {
             throw new Error(errData.message || `Failed to ${isFavorite ? 'remove from' : 'add to'} favorites`);
-          }).catch(() => { // Fallback if response.json() itself fails
+          }).catch(() => { 
             throw new Error(`Failed to ${isFavorite ? 'remove from' : 'add to'} favorites. Status: ${response.status}`);
           });
         }
-        return response.json(); // Expecting updated user object from API
+        return response.json(); 
       })
       .then((updatedUser) => {
-        setIsFavorite(!isFavorite); // Toggle the favorite state
-        localStorage.setItem("user", JSON.stringify(updatedUser)); // Update localStorage
-        setUser(updatedUser); // Update user state in parent component
-        // console.log("Favorite status updated. New user data:", updatedUser);
+        console.log("Updated user from API (favorites toggle):", updatedUser); // <--- ADD THIS LINE
+        setIsFavorite(!isFavorite); 
+        localStorage.setItem("user", JSON.stringify(updatedUser)); 
+        setUser(updatedUser); 
       })
       .catch((error) => {
         console.error("Error toggling favorite status:", error);
         alert(`Error: ${error.message}`);
-        // Optionally, revert UI state if API call failed, though this can get complex
       })
       .finally(() => {
         setIsLoading(false);
@@ -92,7 +81,7 @@ export const MovieView = ({ movies, user, token, setUser }) => {
     return <div>Movie not found.</div>;
   }
 
-  // Defensive rendering for nested properties
+
   const directorName = movie.director?.Name || "N/A";
   const directorBio = movie.director?.Bio || "Not available";
   const directorBirth = movie.director?.Birth || "Not available";
