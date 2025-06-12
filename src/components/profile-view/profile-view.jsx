@@ -4,6 +4,9 @@ import { MovieCard } from "../movie-card/movie-card";
 
 export const ProfileView = ({ movies }) => {
   const localUser = JSON.parse(localStorage.getItem("user"));
+
+  console.log("ProfileView: movies prop:", movies); // <-- ADD THIS LINE
+  console.log("ProfileView: localUser from localStorage:", localUser); // <-- ADD THIS for good measure
   
   if (!localUser) {
     return <p>Please log in to view and edit your profile.</p>;
