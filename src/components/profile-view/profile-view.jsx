@@ -18,7 +18,7 @@ export const ProfileView = ({ movies }) => {
   const safeMovies = Array.isArray(movies) ? movies : [];
 
   const favMovies = safeMovies.filter((movie) => {
-    return movie && movie._id && favoriteMovieIds.includes(movie._id);
+    return movie && movie.id && favoriteMovieIds.includes(movie.id);
   });
 
   // Use the misspelled field name for initial state
